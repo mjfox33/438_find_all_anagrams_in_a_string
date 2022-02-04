@@ -1,16 +1,29 @@
+from collections import defaultdict
 class Solution:
     def findAnagrams(self, s: str, p: str) -> list[int]:
         ns = len(s)
         np = len(p)
-        p = sorted(p)
+        hash_map = defaultdict(int)
         result = list()
-        sorts = {}
-        for i in range(ns-np+1):
-            tester = s[i:i+np]
-            if tester not in sorts:
-                sorts[tester] = sorted(s[i:i+np])
-            if sorts[tester] == p:
-                result.append(i)
+
+        if np > ns:
+            return []
+
+        for char in p:
+            hash_map[char] += 1
+
+        for i in range(np-1):
+            if s[i] in hash_map:
+                hash_map[s[i]] -= 1
+        
+        for i in range(-1,ns-np+1):
+            if i>-1 and s[i] in hash_map:
+                hash_map[s[i]] += 1
+            if i+np < ns and s[i+np] in hash_map:
+                hash_map[s[i+np]] -= 1
+            if all(x == 0 for x in hash_map.values()):
+                result.append(i+1)
+        
         return result
 
 
